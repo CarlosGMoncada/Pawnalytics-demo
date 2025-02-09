@@ -11,6 +11,8 @@
 
 Pawnalytics demo is a web application for analyzing images for Canine Hip Dysplasia (CHD) with model [YOLOv11 By Ultralytics](https://docs.ultralytics.com/models/yolo11/) trained with a custom dataset (mostly from [Stanford Vision and Learning Lab](https://svl.stanford.edu/)).
 
+You can try it right now at https://pawnalytics.com/demo/
+
 ## Features
 
 - Image analysis for Canine Hip Dysplasia (CHD) using fine tuned YOLOv11 trained in and hosted by Roboflow.
