@@ -1,43 +1,63 @@
+document.querySelectorAll('input[name="inputType"]').forEach((elem) => {
+    elem.addEventListener('change', (event) => {
+        const value = event.target.value;
+        if (value === 'file') {
+            document.getElementById('fileInputContainer').style.display = 'block';
+            document.getElementById('urlInputContainer').style.display = 'none';
+        } else {
+            document.getElementById('fileInputContainer').style.display = 'none';
+            document.getElementById('urlInputContainer').style.display = 'block';
+        }
+    });
+});
+
 document.getElementById('uploadForm').addEventListener('submit', async (event) => {
     event.preventDefault();
 
     const fileInput = document.getElementById('imageInput');
+    const urlInput = document.getElementById('urlInput');
     const file = fileInput.files[0];
+    const imageUrl = urlInput.value;
 
-    if (!file) {
-        alert('Please select an image.');
+    if (!file && !imageUrl) {
+        alert('Please select an image or enter a URL.');
         return;
     }
 
-    // Convert the image to a base64 URL
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-        const imageUrl = e.target.result;
-        console.log(imageUrl);
-        // Call the Roboflow API
-        const response = await fetch('https://detect.roboflow.com/infer/workflows/pawnalytics/custom-workflow', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                api_key: 'VPDCKZ9xwFPaaBoBXyi2',
-                inputs: {
-                    "image": {"type": "base64", "value": imageUrl.split(',')[1]} // Use base64 for uploaded images
-                }
-            })
-        });
-
-        const result = await response.json();
-
-        console.log(result);
-        // Display the results
-        displayResults(result, imageUrl);
-    };
-    reader.readAsDataURL(file);
+    if (file) {
+        // Convert the image to a base64 URL
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            const base64Image = e.target.result.split(',')[1];
+            await callApi(base64Image, true);
+        };
+        reader.readAsDataURL(file);
+    } else {
+        await callApi(imageUrl, false);
+    }
 });
 
-function displayResults(result, imageUrl) {
+async function callApi(imageData, isBase64) {
+    const response = await fetch('https://detect.roboflow.com/infer/workflows/pawnalytics/custom-workflow', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            api_key: 'VPDCKZ9xwFPaaBoBXyi2',
+            inputs: {
+                "image": {"type": isBase64 ? "base64" : "url", "value": imageData} // Use base64 for uploaded images or URL for image URL
+            }
+        })
+    });
+
+    const result = await response.json();
+    console.log(result);
+    // Display the results
+    displayResults(result, imageData, isBase64);
+}
+
+function displayResults(result, imageUrl, isBase64) {
     const resultsDiv = document.getElementById('results');
     resultsDiv.innerHTML = '';
     //console.log(result);
@@ -48,11 +68,12 @@ function displayResults(result, imageUrl) {
     }
 //<pre>${JSON.stringify(result, null, 2)}</pre>
     // Display the results (customize based on your workflow output)
-    resultsDiv.innerHTML = `
+    /*resultsDiv.innerHTML = `
         <h3>Analysis Results</h3>
         <img src="${imageUrl}" alt="Uploaded Image" style="max-width: 100%; height: auto;">
-    `;
+    `;*/
 
+    // Check if outputs array and polygon_visualization exist
     if (result.outputs && result.outputs.length > 0 && result.outputs[0].polygon_visualization) {
         const polygonVisualization = result.outputs[0].polygon_visualization;
         if (polygonVisualization.type === "base64" && polygonVisualization.value) {
