@@ -37,6 +37,8 @@ document.getElementById('uploadForm').addEventListener('submit', async (event) =
     }
 });
 
+// Call the Roboflow API
+// E-mail me at carlos.garciamoncada@gmail.com or the API key for pawnalytics roboflow model
 async function callApi(imageData, isBase64) {
     const response = await fetch('https://detect.roboflow.com/infer/workflows/pawnalytics/custom-workflow', {
         method: 'POST',
@@ -44,7 +46,7 @@ async function callApi(imageData, isBase64) {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            api_key: 'VPDCKZ9xwFPaaBoBXyi2',
+            api_key: 'insert-your-api-key-here',
             inputs: {
                 "image": {"type": isBase64 ? "base64" : "url", "value": imageData} // Use base64 for uploaded images or URL for image URL
             }
@@ -60,18 +62,12 @@ async function callApi(imageData, isBase64) {
 function displayResults(result, imageUrl, isBase64) {
     const resultsDiv = document.getElementById('results');
     resultsDiv.innerHTML = '';
-    //console.log(result);
+
     // Handle errors
     if (result.error) {
         resultsDiv.innerHTML = `<p>Error: ${result.error}</p>`;
         return;
     }
-//<pre>${JSON.stringify(result, null, 2)}</pre>
-    // Display the results (customize based on your workflow output)
-    /*resultsDiv.innerHTML = `
-        <h3>Analysis Results</h3>
-        <img src="${imageUrl}" alt="Uploaded Image" style="max-width: 100%; height: auto;">
-    `;*/
 
     // Check if outputs array and polygon_visualization exist
     if (result.outputs && result.outputs.length > 0 && result.outputs[0].polygon_visualization) {
@@ -97,4 +93,3 @@ function displayResults(result, imageUrl, isBase64) {
         resultsDiv.innerHTML += `<p>No visualization available.</p>`;
     }
 }
-
