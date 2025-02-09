@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pawnalytics - Roboflow Workflow</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #results {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        #imageContainer {
+            margin-top: 20px;
+        }
+        #imageContainer img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Upload Image for Analysis</h1>
+    <form id="uploadForm">
+        <input type="file" id="imageInput" accept="image/*">
+        <input type="text" id="urlInput" placeholder="Enter image URL">
+        <button type="submit">Analyze</button>
+    </form>
+
+    <h2>Results</h2>
+    <div id="results"></div>
+    <div id="imageContainer"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
